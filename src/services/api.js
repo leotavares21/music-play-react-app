@@ -1,6 +1,8 @@
 import axios from "axios";
 import { encode } from "base-64";
 
+// create a auth in spotify API
+
 const getToken = await fetch("https://accounts.spotify.com/api/token", {
   method: "POST",
   headers: {
