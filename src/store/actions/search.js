@@ -8,7 +8,7 @@ import {
   STOP_FETCH_SEARCH,
   FETCH_SEARCH_FAILURE,
 } from "../types";
-
+import { encode } from "base-64";
 import api from "../../services/api";
 import convertDurationToTimeString from "../../utils/convertDurationToTimeString";
 
@@ -31,10 +31,10 @@ export function fetchSearchRequest() {
   };
 }
 
-export function fetchSearchSuccess(data, offset) {
+export function fetchSearchSuccess(data) {
   return {
     type: FETCH_SEARCH_SUCCESS,
-    payload: { data, offset },
+    payload: data,
   };
 }
 
@@ -75,14 +75,32 @@ export function fetchSearchFailure(error) {
 
 export function getSearch() {
   return async (dispatch, getState) => {
-    const { searchTerm, searchOffset } = getState().search;
+    const { searchTerm } = getState().search;
     const { list } = getState().myList;
 
     dispatch(fetchSearchRequest());
 
     try {
+      const getToken = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${encode(
+            `${import.meta.env.VITE_SPOTIFY_CLIENT_ID}:${
+              import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
+            }`
+          )}`,
+        },
+        body: "grant_type=client_credentials",
+      });
+
+      const token = await getToken.json();
+
       const res = await api.get(
-        `https://api.spotify.com/v1/search?query=${searchTerm}&limit=20&offset=${searchOffset}&type=track`
+        `https://api.spotify.com/v1/search?query=${searchTerm}&limit=20&offset=0&type=track`,
+        {
+          headers: { Authorization: `Bearer ${token.access_token}` },
+        }
       );
 
       const fetchData = res.data.tracks.items.map(data => ({
@@ -94,11 +112,9 @@ export function getSearch() {
         },
       }));
 
-      const offset = searchOffset + 20;
-
       dispatch({
         type: FETCH_SEARCH_SUCCESS,
-        payload: { data: fetchData, offset },
+        payload: { data: fetchData },
       });
     } catch (err) {
       dispatch(fetchSearchFailure(err));
@@ -128,10 +144,12 @@ export function loadMoreSearch() {
         body: "grant_type=client_credentials",
       });
 
+      const offset = searchOffset + 20;
+
       const token = await getToken.json();
 
       const res = await api.get(
-        `https://api.spotify.com/v1/search?query=${searchTerm}&limit=20&offset=${searchOffset}&type=track`,
+        `https://api.spotify.com/v1/search?query=${searchTerm}&limit=20&offset=${offset}&type=track`,
         {
           headers: { Authorization: `Bearer ${token.access_token}` },
         }
@@ -145,8 +163,6 @@ export function loadMoreSearch() {
           duration: convertDurationToTimeString(data.duration_ms),
         },
       }));
-
-      const offset = searchOffset + 20;
 
       if (fetchData.length === 0) {
         dispatch(stopFetchSearch());

@@ -11,13 +11,12 @@ const Container = styled.header`
   border-bottom: 1px solid #ccc;
 
   margin-bottom: 3rem;
-  transition: top 0.3s ease-in-out;
 
   position: sticky;
   top: 0;
   z-index: 100;
 
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 
   @media (max-width: 580px) {
     transform: ${props =>

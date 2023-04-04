@@ -10,7 +10,7 @@ import Search from "../Search";
 import Container from "./style";
 
 function Header({ list }) {
-  const [scrollDirection, setScrollDirection] = useState("down");
+  const [scrollDirection, setScrollDirection] = useState("up");
 
   useEffect(() => {
     let lastScroll = window.pageYOffset;

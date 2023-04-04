@@ -182,9 +182,9 @@ function Home({
               ))}
               <div id="end-of-list"></div>
               {isLoadingMore ? (
-                <div>Carregando...</div>
+                <div className="msg-text">Carregando...</div>
               ) : (
-                <div>A lista chegou ao fim</div>
+                <div className="msg-text">A lista chegou ao fim</div>
               )}
             </div>
           </List>

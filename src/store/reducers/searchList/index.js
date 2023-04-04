@@ -13,7 +13,7 @@ import {
 const initialState = {
   searchData: [],
   searchTerm: "",
-  searchOffset: 0,
+  searchOffset: 20,
   searchIsLoading: false,
   isLoadingMore: false,
   dontLoadMore: false,
@@ -37,12 +37,12 @@ function searchReducer(state = initialState, action) {
       return {
         ...state,
         searchIsLoading: true,
+        searchOffset: 0,
       };
     case FETCH_SEARCH_SUCCESS:
       return {
         ...state,
         searchData: [...state.searchData, ...action.payload.data],
-        searchOffset: action.payload.offset,
         searchIsLoading: false,
       };
     case MAKE_A_NEW_DATA_SEARCH:

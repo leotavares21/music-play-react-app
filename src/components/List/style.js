@@ -6,7 +6,11 @@ const Container = styled.section`
   @media (max-width: 890px) {
     padding-bottom: 11.5rem;
   }
-  
+
+  .msg-text {
+    width: 100%;
+  }
+
   ul {
     .scroller {
       display: flex;
