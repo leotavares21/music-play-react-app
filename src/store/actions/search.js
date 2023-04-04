@@ -81,26 +81,8 @@ export function getSearch() {
     dispatch(fetchSearchRequest());
 
     try {
-      const getToken = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${btoa(
-            `${import.meta.env.VITE_SPOTIFY_CLIENT_ID}:${
-              import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
-            }`
-          )}`,
-        },
-        body: "grant_type=client_credentials",
-      });
-
-      const token = await getToken.json();
-
       const res = await api.get(
-        `https://api.spotify.com/v1/search?query=${searchTerm}&limit=20&offset=${searchOffset}&type=track`,
-        {
-          headers: { Authorization: `Bearer ${token.access_token}` },
-        }
+        `https://api.spotify.com/v1/search?query=${searchTerm}&limit=20&offset=${searchOffset}&type=track`
       );
 
       const fetchData = res.data.tracks.items.map(data => ({

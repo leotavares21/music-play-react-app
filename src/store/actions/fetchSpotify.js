@@ -1,8 +1,4 @@
-import {
-  FETCH_REQUEST,
-  FETCH_SUCCESS,
-  FETCH_FAILURE,
-} from "../types";
+import { FETCH_REQUEST, FETCH_SUCCESS, FETCH_FAILURE } from "../types";
 import api from "../../services/api";
 
 import convertDurationToTimeString from "../../utils/convertDurationToTimeString";
@@ -34,24 +30,7 @@ export function getData() {
 
       dispatch(fetchRequest());
 
-      const getToken = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${btoa(
-            `${import.meta.env.VITE_SPOTIFY_CLIENT_ID}:${
-              import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
-            }`
-          )}`,
-        },
-        body: "grant_type=client_credentials",
-      });
-
-      const token = await getToken.json();
-
-      const res = await api.get("playlists/37i9dQZEVXbMXbN3EUUhlg", {
-        headers: { Authorization: `Bearer ${token.access_token}` },
-      });
+      const res = await api.get("playlists/37i9dQZEVXbMXbN3EUUhlg");
 
       const fetchData = res.data.tracks.items.map(data => ({
         isIncluded:
